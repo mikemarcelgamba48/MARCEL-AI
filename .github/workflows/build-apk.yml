@@ -1,4 +1,5 @@
 
+
 name: Build MARCEL APK
 
 on:
@@ -23,10 +24,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Android SDK packages
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
+
+      - name: Install Android packages
         run: |
-          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Gradle
@@ -49,5 +53,4 @@ jobs:
           name: MARCEL-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-
 
