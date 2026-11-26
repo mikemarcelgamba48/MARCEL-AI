@@ -3,7 +3,8 @@ name: Build MARCEL APK
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -26,10 +27,19 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Android packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+
+      - name: Check Android project
+        run: |
+          test -f app/build.gradle || test -f app/build.gradle.kts
+          test -d app/src
 
       - name: Build MARCEL
         run: gradle assembleDebug
@@ -39,3 +49,5 @@ jobs:
         with:
           name: MARCEL-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
